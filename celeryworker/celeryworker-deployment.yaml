@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: celeryworker
+  name: celeryworker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celeryworker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: celeryworker
+    spec:
+      containers:
+        - image: iceguy/jadzia-celery:alpha_v03g
+          name: celeryworker
+          volumeMounts:
+            - name: jadzia-flask-storage
+              mountPath: /app/uploads
+      volumes:
+        - name: jadzia-flask-storage
+          persistentVolumeClaim:
+            claimName: jadzia-flask-pvc2
+      restartPolicy: Always
+status: {}
+

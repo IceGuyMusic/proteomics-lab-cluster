@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jadzia-flask-app
+  name: jadzia-flask-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jadzia-flask-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jadzia-flask-app
+          #annotations:
+          #container.apparmor.security.beta.kubernetes.io/jadzia-flask-container: unconfined
+    spec:
+      containers:
+        - env:
+           - name: FLASK_APP
+             value: Jadzia.py 
+           - name: FLASK_RUN_HOST
+             value: 0.0.0.0
+          image: iceguy/jadzia-flask:alpha_v03g
+          name: jadzia-flask-container
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: jadzia-flask-storage
+              mountPath: /app/uploads
+          resources: {}
+      volumes:
+        - name: jadzia-flask-storage
+          persistentVolumeClaim:
+            claimName: jadzia-flask-pvc2
+      restartPolicy: Always
+status: {}
+
